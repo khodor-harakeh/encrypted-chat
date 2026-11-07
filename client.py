@@ -4,7 +4,7 @@ import socket
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 # 2. Connect to the server (festination IP + port)
-client_socket.connect(("127.0.0.1", 5000))
+client_socket.connect(("192.168.0.107", 5000))
 print("Connected to server! Type /quit to exit.\n")
 
 while True:

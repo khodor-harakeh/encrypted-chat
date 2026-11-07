@@ -6,11 +6,12 @@ server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
 # 2. Bind to an address (reserve this building + appartment)
-server_socket.bind(("127.0.0.1", 5000))
+server_socket.bind(("0.0.0.0", 5000))
 
 # 3. Listen for incomming connections
 server_socket.listen(1)
-print("Server listening on 127.0.0.1:5000 ...")
+print("Server listening on 0.0.0.0:5000 ...")
+print(f"My real IP: {socket.gethostbyname(socket.gethostname())}")
 
 # 4. Accept a client (blocks until someone connects)
 client_socket, client_address = server_socket.accept()
