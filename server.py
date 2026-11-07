@@ -2,6 +2,8 @@ import socket
 
 # 1. Create a socket (ask the OS for a communication endpoint)
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# Prevents "Address already in use" when restarting the server quickly
+server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
 # 2. Bind to an address (reserve this building + appartment)
 server_socket.bind(("127.0.0.1", 5000))
@@ -14,14 +16,27 @@ print("Server listening on 127.0.0.1:5000 ...")
 client_socket, client_address = server_socket.accept()
 print(f"Client connected from {client_address}")
 
-# 5. Recieve data
-data = client_socket.recv(1024)
-print(f"Recieved: {data.decode()}")
+while True:
+    # 5. Wait for client message
+    data = client_socket.recv(1024)
+    if not data:
+        print("Client disconnected.")
+        break
+    
+    message = data.decode("utf-8")
+    if message == "/quit":
+        print("Client ended the chat.")
+        break
 
-# 6. Send a reply
-client_socket.send("Hello from server!".encode())
+    print(f"Client: {message}")
+
+    # 6. Send server reply
+    reply = input("You (Server): ")
+    client_socket.send(reply.encode("utf-8"))
+    if reply == "/quit":
+        print("Closing chat.")
+        break
 
 # 7. Clean up
 client_socket.close()
 server_socket.close()
-print("Server closed.")
