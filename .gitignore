@@ -1,4 +1,57 @@
+# =================================================
+# 1. SECRETS & SENSITIVE DATA (CRITICAL)
+# =================================================
+.env
+.env.*
+*.pem
+*.key
+*.pfx
+secrets.json
+appsettings.Development.json
+*.p12
+
+# =================================================
+# 2. PYTHON JUNK & VIRTUAL ENVS
+# =================================================
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+*.so
+.Python
+/env/
+/venv/
+/.venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+*.egg-info/
+.pytest_cache/
+
+# ==================================================
+# 3. C# / .NET BUILD OUTPUTS & ARTIFACTS
+# ==================================================
 bin/
 obj/
+out/
+[Bb]in/
+[Oo]bj/
+*.user
+*.userosscache
+*.sln.docstates
+.vs/
+.vscode/
+
+# ===================================================
+# 4. EDITORS & OS JUNK (Vim, Linux, macOS, Windows)
+# ===================================================
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+.idea/
+*.bak
