@@ -3,6 +3,8 @@
 import sys
 # Python built-in library for BSD socket API
 import socket
+# Python built-in module for date and time 
+import datetime
 
 # 2. CONSTRAINTS / CONFIGURATION (Upper_snake_case)
 APP_NAME = "Python Syntax Gym"
@@ -30,10 +32,9 @@ def from_bytes(data: bytes) -> str:
 def echo_round(message: str) -> None:
     byte_string = to_bytes(message)
     count = len(byte_string)
-    print(f"byte count = {count} bytes")
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     echoed_string = from_bytes(byte_string)
-    print(f"Echo: {echoed_string}")
-    return None
+    print(f"[{timestamp}] byte count = {count} bytes | Echo: {echoed_string}")
 
 
 # 4. MAIN EXECUTION ENTRY POINT
