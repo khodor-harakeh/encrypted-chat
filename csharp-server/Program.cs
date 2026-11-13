@@ -42,7 +42,7 @@ class Server
 
         // 3. Get network stream for reading/writing
 	// what is a network stream ?
-	// an abstraction for a continuous sequence of bytes flowing rom source to destination over time
+	// an abstraction for a continuous sequence of bytes flowing from source to destination over time
 	// wraps the socket inside a Stream interface -> to be capable to read/write data same as on disk
 	// good practice for encryption later
         NetworkStream stream = client.GetStream();
