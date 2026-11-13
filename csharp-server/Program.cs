@@ -18,7 +18,8 @@ class Server
 	// defining ip address to be capable to connect to other Devices not just same device home 127.0.0.1
         IPAddress ipAddress = IPAddress.Any; // MEANS 0.0.0.0
         int port = 5000; // use port 5000
-        TcpListener listener = new TcpListener(ipAddress, port); // new socket for server to listen on 0.0.0.0:5000
+        // mirrors POSIX BSD socket() + bind() system calls
+        TcpListener listener = new TcpListener(ipAddress, port); // Creates a socket and reserves port 5000
 
         // Allows address reuse (like SO_REUSE)
 	// SocketOptionLevel.Socket -> applied to socket layer
@@ -27,12 +28,13 @@ class Server
         listener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
 	
 	// POSIX: here mirrors BSD listen() system call
-        listener.Start();
+        listener.Start(); // Marks the socket as passive and ready to accept incoming connections.
 	// print
         Console.WriteLine($"[C# Server] Listening on 0.0.0.0:{port} ...");
         
         // 2. Accept incoming client connection (blocking)
 	// POSIX: here mirrors BSD accept() system call
+        // Pauses until a client completes the 3-way handshake, then returns a new socket for that client.
         TcpClient client = listener.AcceptTcpClient();
 	// return IPEndpoint object by explicit type casting in order to access .Address and .Port
 	// ! null-forgiving operator tells the compiler don't throw a warning, trust me not null ;)
@@ -55,6 +57,7 @@ class Server
         {  
             // 4. Read bytes from client (mirrors POSIX BSD recv() system call)
 	    // stream.Read() dumps raw bytes into the existing bucket
+            // Copies incoming bytes from the kernel's receive buffer into your byte[] array.
 	    // arguments: (analogy)
 	    // buffer -> whiteboard to write on
 	    // 0 -> start writing on the beginning (position zero)
@@ -95,6 +98,7 @@ class Server
 	    // string -> bytes (UTF-8)
             byte[] replyBytes = Encoding.UTF8.GetBytes(reply);
 	    // mirrors POSIX BSD send() system call
+            // Copies outgoing bytes from your byte[] array into the kernel's send buffer.
             stream.Write(replyBytes, 0, replyBytes.Length);
 	
 	    // if server sent "/quit" -> exit chat from server side
@@ -106,6 +110,8 @@ class Server
         }
 
         // 6. Clean up
+        // mirrors POSIX BSD close() system call
+        // Sends a TCP FIN packet to end the connection and frees the OS file descriptor.
 	// Why need it?
 	// Prevents: 
 	// 1- Port Exhaustion
