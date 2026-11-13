@@ -10,7 +10,8 @@ class Program
     static string Prompt(string text)
     {
         Console.Write(text);
-        return Console.ReadLine().Trim();
+        // if null replaces it with an empty string
+        return (Console.ReadLine() ?? "").Trim();
     }
 
     // Convert string to UTF-8 byte array
@@ -55,7 +56,11 @@ class Program
             }
 
             // if user submits an empty string -> print "Input a valid message!" and `continue`
-            if (string.IsNullOrEmpty(message)) Console.WriteLine("Input a valid message!");
+            if (string.IsNullOrEmpty(message))
+            {
+                Console.WriteLine("Input a valid message!");
+                continue;
+            }
 
             // returns echoed message
             EchoRound(message);
