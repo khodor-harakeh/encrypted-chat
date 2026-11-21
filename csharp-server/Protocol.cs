@@ -47,18 +47,16 @@ public static class Protocol
         stream.Write(packet, 0, packet.Length);
     }
 
-    // Public Method Recieve Encrypted Message
-    public static string? RecieveEncryptedMessage(NetworkStream stream, byte[] key)
+    // Public Method Receive Encrypted Message
+    public static string? ReceiveEncryptedMessage(NetworkStream stream, byte[] key)
     {
-        byte[]? header = new byte[4];
-        header = ReadExact(stream, 4);
+        byte[]? header = ReadExact(stream, 4);
         if (header == null)
         {
             return null;
         }
         uint payloadLen = BinaryPrimitives.ReadUInt32BigEndian(header);
-        byte[]? payload = new byte[(int)payloadLen];
-        payload = ReadExact(stream, (int)payloadLen);
+        byte[]? payload = ReadExact(stream, (int)payloadLen);
         if (payload == null)
         {
             return null;
@@ -76,7 +74,7 @@ public static class Protocol
         }
         catch (CryptographicException)
         {
-            Console.WriteLine("[INTEGRITY ALERT] Authentication tag mismatch! Message was tempered with or corrupted.");
+            Console.WriteLine("[INTEGRITY ALERT] Authentication tag mismatch! Message was tampered with or corrupted.");
             return "[CORRUPTED MESSAGE - REJECTED]";
         }
     }
