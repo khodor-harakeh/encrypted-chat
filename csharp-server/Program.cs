@@ -11,6 +11,9 @@ using System.Text;
 // CLASS FOR SERVER -ENCAPSULATES THE CODE (TRADITIONAL C# ACT)
 class Server
 {
+    // Shared State Flag
+    static bool running = true;
+
     // WHERE OS STARTS EXECUTING AFTER "dotnet run" 
     static void Main()
     {
@@ -49,31 +52,38 @@ class Server
 	    // good practice for encryption later
         NetworkStream stream = client.GetStream();
 
-	    // the loop where all the main work is done
-        while (true)
-        { 
-            // 4. Protocol.ReceiveEncryptedMessage handles reading the stream & detecting disconnects!
-            string? message = Protocol.ReceiveEncryptedMessage(stream, Protocol.SharedKey);
-            if (message == null)
+        // 4. Background Receive Task
+        Task receiveTask = Task.Run(() =>
+        {
+            while (running)
             {
-                Console.WriteLine("[C# Server] Client disconnected.");
-                break;
+                try
+                {
+                    string? msg = Protocol.ReceiveEncryptedMessage(stream, Protocol.SharedKey);
+                    if (msg == null || msg == "/quit")
+                    {
+                        Console.WriteLine("\n[C# Server] Client disconnected or ended the chat.");
+                        running = false;
+                        break;
+                    }   
+                    Console.Write($"\nClient: {msg}\nYou (C# Server): ");
+                }
+                catch
+                {
+                    break;
+                }
             }
-	        //  if "/quit" is recieved -> end chat from client side
-            if (message == "/quit")
-            {
-                Console.WriteLine("[C# Server] Client ended the chat.");
-                break;
-            }
-	    
-	        // prints client's message
-            Console.WriteLine($"Client: {message}");
+        });
 
+	    // the loop where all the main work is done
+        while (running)
+        { 
             // 5. Send server reply
             Console.Write("You (C# Server): ");
 	        // read string input 
 	        // ? means it can have null value
             string? reply = Console.ReadLine();
+            if (!running) break;
 	        // either reply == null (pressed ctrl+D/ctrl+Z) -> EOF
 	        // or reply == "" (empty string with zero characters)
 	        // assigns reply = " " (a single whitespace) in both cases 
@@ -85,6 +95,7 @@ class Server
             if (reply == "/quit")
             {
                 Console.WriteLine("[C# Server] Closing chat.");
+                running = false;
                 break;
             }
         }
