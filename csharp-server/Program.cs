@@ -48,29 +48,11 @@ class Server
 	    // wraps the socket inside a Stream interface -> to be capable to read/write data same as on disk
 	    // good practice for encryption later
         NetworkStream stream = client.GetStream();
-	    // pre-allocates a 1 KB bucket in memory
-	    // helps later to prevent memory fragmentation and garbage collection lag
-        byte[] buffer = new byte[1024];
 
 	    // the loop where all the main work is done
         while (true)
-        {  
-            // 4. Read bytes from client (mirrors POSIX BSD recv() system call)
-	        // stream.Read() dumps raw bytes into the existing bucket
-            // Copies incoming bytes from the kernel's receive buffer into your byte[] array.
-	        // arguments: (analogy)
-	        // buffer -> whiteboard to write on
-	        // 0 -> start writing on the beginning (position zero)
-	        // buffer.Length -> stop if you reach edge (1024 bytes)
-            int bytesRead = stream.Read(buffer, 0, buffer.Length);
-            
-            // bytesRead == 0 means client disconnected cleanly (same as b"" in Python)
-            if (bytesRead == 0)
-            {
-                Console.WriteLine("[C# Server] Client disconnected.");
-                break;
-            }
-
+        { 
+            // 4. Protocol.ReceiveEncryptedMessage handles reading the stream & detecting disconnects!
             string? message = Protocol.ReceiveEncryptedMessage(stream, Protocol.SharedKey);
             if (message == null)
             {
