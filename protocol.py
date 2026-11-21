@@ -38,7 +38,7 @@ def send_encrypted_message(sock: socket.socket, plaintext: str, key: bytes) -> N
     header = struct.pack(">I", len(payload))
     sock.sendall(header + payload)
 
-# Recieve Encrypted Message
+# Receive Encrypted Message
 def recv_encrypted_message(sock: socket.socket, key: bytes) -> str | None:
     header = recv_exact(sock, 4)
     if header is None:
@@ -63,7 +63,7 @@ def recv_encrypted_message(sock: socket.socket, key: bytes) -> str | None:
 # =================================================================================================
 if __name__ == "__main__":
     # Create an in-memory pair of connected sockets
-    sender, reciever = socket.socketpair()
+    sender, receiver = socket.socketpair()
 
     test_message = "Protocol test: Hello Encrypted World!"
     print(f"[TEST] Sending: {test_message}")
@@ -71,13 +71,13 @@ if __name__ == "__main__":
     # Send encrypted packet
     send_encrypted_message(sender, test_message, SHARED_KEY)
 
-    # Recieve and decrypt packet
-    recieved_message = recv_encrypted_message(reciever, SHARED_KEY)
-    print(f"[TEST] Recieved: {recieved_message}")
+    # Receive and decrypt packet
+    received_message = recv_encrypted_message(reciever, SHARED_KEY)
+    print(f"[TEST] Received: {received_message}")
 
-    assert test_message == recieved_message, "Mismatch!"
+    assert test_message == received_message, "Mismatch!"
     print("[TEST] SUCCESS! Framing, Nonce, Tag, and Ciphertext round-trip verified.")
 
     sender.close()
-    reciever.close()
+    receiver.close()
 
