@@ -2,7 +2,7 @@
 sequenceDiagram
     autonumber
     actor MobileUser as Mobile Client (Python 3 / Termux)
-    actor ServerAdmin as Server Host (C# .NET 8 / Ubuntu)
+    actor ServerAdmin as Server Host (C-Sharp DotNET 8 / Ubuntu)
     participant Kernel as Linux TCP Socket & NAT / WAN Gateway
 
     Note over MobileUser, ServerAdmin: Layer 4: TCP 3-Way Handshake
