@@ -55,7 +55,13 @@ public static class Protocol
         {
             return null;
         }
+        const uint MaxPayloadSize = 64 * 1024; // 64 KB
         uint payloadLen = BinaryPrimitives.ReadUInt32BigEndian(header);
+        if (payloadLen > MaxPayloadSize)
+        {
+            Console.WriteLine("[SECURITY] Payload exceeded ceiling. Dropping client.");
+            return null; // Close connection immediately
+        }
         byte[]? payload = ReadExact(stream, (int)payloadLen);
         if (payload == null)
         {
