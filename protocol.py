@@ -72,7 +72,7 @@ if __name__ == "__main__":
     send_encrypted_message(sender, test_message, SHARED_KEY)
 
     # Receive and decrypt packet
-    received_message = recv_encrypted_message(reciever, SHARED_KEY)
+    received_message = recv_encrypted_message(receiver, SHARED_KEY)
     print(f"[TEST] Received: {received_message}")
 
     assert test_message == received_message, "Mismatch!"
